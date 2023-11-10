@@ -11,6 +11,7 @@ import sys
 import time
 import tsp_reader
 from solvers import solver
+import robot_manager
 
 ##########################################################################  
 # The main function.
@@ -26,36 +27,27 @@ def main():
     # tsp_c_type is the coordinate system used
     # tsp_points are the points
     # tsp_dist_mat are the integer distances (.tsp uses integer distances)
-    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file('tsp/berlin52.tsp')
+    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file('tsp/burma14.tsp')
     tsp_dist_mat = tsp_reader.get_distances(tsp_points, tsp_c_type)
-    print(tsp_points, tsp_dist_mat)
 
-
-    # Testing code
-
-    solv = solver.Solver(tsp_dist_mat)
-    num_robots = 5
-    pts_to_visit = list(range(0, len(tsp_points)))
-    paths = solv.solve(num_robots, pts_to_visit, [])
-    print(paths)
-
-
-    # Placeholder code
-    
-    # Calculate initial paths
+    robo_mgr = robot_manager.RobotMgr(3, tsp_dist_mat)
+    robo_mgr.calc_robotpath_init() # Calculate initial paths
 
     path_steps = 0 # Used to measure the time_steps
     while True:
 
-        # Make robots move
-        
+        path_steps += 1 # Count
+
+        robo_mgr.move_robots() # Make robots move
+
         if False: # Do random probability that one of the robots breaks down
-            1 # Reassign robot paths; robots must start at specific depots
-        
-        if True: # If robots have all reached their goals or they all have crashed
+            robo_mgr.shutdown_random_robot()
+            robo_mgr.calc_robotpath_error() # Reassign robot paths; robots must start at specific depots
+
+        if robo_mgr.check_if_finished(): # If all robots are finished...
             break # Stop
 
-        path_steps += 1
+    print(path_steps)
 
 ##########################################################################
 
