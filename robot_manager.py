@@ -7,6 +7,7 @@
 
 import robot
 from solvers import solver
+import numpy as np
 
 class RobotMgr:
     
@@ -14,9 +15,9 @@ class RobotMgr:
     # Initializes the robot manager; the number of robots must be specified.
     def __init__(self, num_robots, dist_mat):
         self.robots = []
-        self.num_active_robots = num_robots
+        self.active_robots = list(range(num_robots))
         for i in range(num_robots):
-            self.robots.append(robot.Robot(self))
+            self.robots.append(robot.Robot(self, i))
         
         self.dist_mat = dist_mat # Matrix of distances, to be used by robots
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
@@ -33,31 +34,50 @@ class RobotMgr:
     ##########################################################################  
     # Calculates the initial paths of the robots.
     def calc_robotpath_init(self):
-        paths = self.solv_init.solve(self.num_active_robots, self.to_visit, [])
+        paths = self.solv_init.solve(len(self.active_robots), self.to_visit, [])
         print(paths)
         print(self.dist_mat)
-        for i in range(self.num_active_robots):
+        for i in range(len(self.active_robots)):
             self.robots[i].init_path(paths[i])
 
     ##########################################################################  
     # Recalculates the paths of the currently working robots.
     def calc_robotpath_error(self):
-        1 # Will be done tomorrow!
+
+        starting_pts = []
+        for active_robot_ind in self.active_robots:
+            starting_pts.append(self.robots[active_robot_ind].path[0])
+        print(starting_pts)
+        print(self.to_visit)
+        paths = self.solv_init.solve(len(self.active_robots), self.to_visit, starting_pts)
+        print(paths)
+        for i in range(len(self.active_robots)):
+            self.robots[self.active_robots[i]].modify_path(paths[i])
     
     ##########################################################################  
     # Shuts down a random robot.
     def shutdown_random_robot(self):
-        1 # Will be done tomorrow!
+
+        # If there's only one active robot, then don't shut anything down.
+        if len(self.active_robots) > 1:
+
+            # This is just to assure that the robot is still running
+            robo_down = self.active_robots[np.random.randint(0, len(self.active_robots))]
+            
+            self.robots[robo_down].is_shutdown = True
+            self.active_robots.remove(robo_down)
+            print(str(robo_down) + " shut down")
 
     ##########################################################################  
     # Removes a point from the "to visit" list.
     def visited_point(self, point):
+        print(str(point) + " visited")
         self.to_visit.remove(point)
 
     ##########################################################################  
     # Checks if all of the robots are finished or shut down.
     def check_if_finished(self):
         for robot in self.robots: 
-            if not robot.is_finished or robot.is_shutdown:
+            if not robot.is_finished and not robot.is_shutdown:
                 return False
         return True

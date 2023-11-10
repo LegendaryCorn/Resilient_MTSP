@@ -29,9 +29,9 @@ class Solver:
                 pts_list.append([])
             else:
                 pts_list.append([pts_start[i]])
-
+                all_pts_visit.remove(pts_start[i])
         
-        for pt in pts_visit:
+        for pt in all_pts_visit:
             pts_list[np.random.randint(0, num_robots)].append(pt)
 
         # We will probably need some sort of evaluator class if we're using a GA.

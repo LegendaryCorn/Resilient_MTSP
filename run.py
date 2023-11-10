@@ -27,10 +27,12 @@ def main():
     # tsp_c_type is the coordinate system used
     # tsp_points are the points
     # tsp_dist_mat are the integer distances (.tsp uses integer distances)
-    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file('tsp/burma14.tsp')
+    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file('tsp/berlin52.tsp')
     tsp_dist_mat = tsp_reader.get_distances(tsp_points, tsp_c_type)
 
-    robo_mgr = robot_manager.RobotMgr(3, tsp_dist_mat)
+    robo_mgr = robot_manager.RobotMgr(5, tsp_dist_mat)
+    num_fails = 2
+    fail_prob = 0.001
     robo_mgr.calc_robotpath_init() # Calculate initial paths
 
     path_steps = 0 # Used to measure the time_steps
@@ -40,9 +42,10 @@ def main():
 
         robo_mgr.move_robots() # Make robots move
 
-        if False: # Do random probability that one of the robots breaks down
-            robo_mgr.shutdown_random_robot()
+        if np.random.random() < fail_prob and num_fails > 0: # Do random probability that one of the robots breaks down
+            robo_mgr.shutdown_random_robot() # Shut down a robot
             robo_mgr.calc_robotpath_error() # Reassign robot paths; robots must start at specific depots
+            num_fails -= 1
 
         if robo_mgr.check_if_finished(): # If all robots are finished...
             break # Stop
