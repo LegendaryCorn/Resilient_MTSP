@@ -1,1 +1,5 @@
-This file is empty for now.
+RND_SEED | 1
+TSP_FILE | tsp/eil51.tsp
+NUM_ROBS | 5
+NUM_SHDS | 2
+SHD_PROB | 0.01

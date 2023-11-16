@@ -18,21 +18,30 @@ import robot_manager
 def main():
 
     # I will modify this when it is necessary. Right now, this code can be ignored.
-    if(len(sys.argv) == 200):
+    if(len(sys.argv) != 2):
         print("Invalid arguments. Please enter the appropriate config file.")
         print("python.exe main.py config.txt")
         return
+
+    # In case there is something wrong with the config file
+    config = parse_config(sys.argv[1])
+    if len(config) == 0:
+        print("The config file was not formatted correctly.")
+        return   
+
+    # Random seed   
+    np.random.seed(int(config['RND_SEED']))
 
     # tsp_name is just the file name
     # tsp_c_type is the coordinate system used
     # tsp_points are the points
     # tsp_dist_mat are the integer distances (.tsp uses integer distances)
-    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file('tsp/berlin52.tsp')
+    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file(config['TSP_FILE'])
     tsp_dist_mat = tsp_reader.get_distances(tsp_points, tsp_c_type)
 
-    robo_mgr = robot_manager.RobotMgr(5, tsp_dist_mat)
-    num_fails = 2
-    fail_prob = 0.001
+    robo_mgr = robot_manager.RobotMgr(int(config['NUM_ROBS']), tsp_dist_mat)
+    num_fails = int(config['NUM_SHDS'])
+    fail_prob = config['SHD_PROB']
     robo_mgr.calc_robotpath_init() # Calculate initial paths
 
     path_steps = 0 # Used to measure the time_steps
@@ -53,6 +62,25 @@ def main():
     print(path_steps)
 
 ##########################################################################
+
+##########################################################################  
+# Will read the config file and convert it into a dictionary.
+# Numeric values are converted into floats.
+def parse_config(filename):
+    config = {}
+    f = open(filename)
+
+    l = f.readline()
+    while l:
+        l_arr = l.strip().split(" | ")
+        try:
+            config[l_arr[0]] = float(l_arr[1]) # If it is numeric
+        except:
+            config[l_arr[0]] = l_arr[1] # If it is not numeric
+        l = f.readline()
+
+    return config
+##########################################################################  
 
 ##########################################################################  
 # Uses the main function if run on.
