@@ -37,6 +37,5 @@ class Evaluator:
                 else:
                     path_lengths[i] += self.dist_mat[paths[i][j]][paths[i][j+1]]
 
-        print(path_lengths)
-        return 0
+        return max(path_lengths)
     ########################################################################## 
