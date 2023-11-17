@@ -52,6 +52,7 @@ def main():
         robo_mgr.move_robots() # Make robots move
 
         if np.random.random() < fail_prob and num_fails > 0: # Do random probability that one of the robots breaks down
+            print(path_steps)
             robo_mgr.shutdown_random_robot() # Shut down a robot
             robo_mgr.calc_robotpath_error() # Reassign robot paths; robots must start at specific depots
             num_fails -= 1

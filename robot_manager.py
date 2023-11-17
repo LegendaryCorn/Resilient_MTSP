@@ -34,22 +34,24 @@ class RobotMgr:
     ##########################################################################  
     # Calculates the initial paths of the robots.
     def calc_robotpath_init(self):
-        paths = self.solv_init.solve(len(self.active_robots), self.to_visit, [])
+        act_robo = []
+        for active_robot_ind in self.active_robots:
+            act_robo.append(self.robots[active_robot_ind])
+        paths = self.solv_init.solve(act_robo, self.to_visit, [])
         print(paths)
-        print(self.dist_mat)
         for i in range(len(self.active_robots)):
-            self.robots[i].init_path(paths[i])
+            self.robots[self.active_robots[i]].init_path(paths[i])
 
     ##########################################################################  
     # Recalculates the paths of the currently working robots.
     def calc_robotpath_error(self):
 
         starting_pts = []
+        act_robo = []
         for active_robot_ind in self.active_robots:
             starting_pts.append(self.robots[active_robot_ind].path[0])
-        print(starting_pts)
-        print(self.to_visit)
-        paths = self.solv_init.solve(len(self.active_robots), self.to_visit, starting_pts)
+            act_robo.append(self.robots[active_robot_ind])
+        paths = self.solv_init.solve(act_robo, self.to_visit, starting_pts)
         print(paths)
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].modify_path(paths[i])
