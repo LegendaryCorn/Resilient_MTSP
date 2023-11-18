@@ -51,13 +51,13 @@ def main():
 
         robo_mgr.move_robots() # Make robots move
 
-        if np.random.random() < fail_prob and num_fails > 0: # Do random probability that one of the robots breaks down
+        if np.random.random() < fail_prob and num_fails > 0 and robo_mgr.num_robots_unfinished() > 1: # Do random probability that one of the robots breaks down
             print(path_steps)
             robo_mgr.shutdown_random_robot() # Shut down a robot
             robo_mgr.calc_robotpath_error() # Reassign robot paths; robots must start at specific depots
             num_fails -= 1
 
-        if robo_mgr.check_if_finished(): # If all robots are finished...
+        if robo_mgr.num_robots_unfinished() == 0: # If all robots are finished...
             break # Stop
 
     print(path_steps)

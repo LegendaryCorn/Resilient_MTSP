@@ -77,9 +77,10 @@ class RobotMgr:
         self.to_visit.remove(point)
 
     ##########################################################################  
-    # Checks if all of the robots are finished or shut down.
-    def check_if_finished(self):
+    # Checks the number of robots that are not finished or shut down.
+    def num_robots_unfinished(self):
+        r = 0
         for robot in self.robots: 
             if not robot.is_finished and not robot.is_shutdown:
-                return False
-        return True
+                r += 1
+        return r

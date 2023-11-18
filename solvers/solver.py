@@ -34,17 +34,17 @@ class Solver:
         eval = evaluator.Evaluator(lens, depots, self.dist_mat)
 
         for x in range(10):
-            pts_list = []
-            all_pts_visit = pts_visit.copy()
-            for i in range(len(robots)):
-                if not pts_start: # If no starting points
-                    pts_list.append([])
-                else:
-                    pts_list.append([pts_start[i]])
-                    all_pts_visit.remove(pts_start[i])
+
+            chrom = pts_visit.copy()
+
+            for i in range(len(robots) - 1):
+                chrom.append(-1 * (i+1))
             
-            for pt in all_pts_visit:
-                pts_list[np.random.randint(0, len(robots))].append(pt)
+            for pt_st in pts_start:
+                chrom.remove(pt_st)
+                    
+            np.random.shuffle(chrom)
+            pts_list = self.chrom_to_path(chrom, pts_start, len(robots))
 
             # We will probably need some sort of evaluator class if we're using a GA.
             pts_val = eval.eval_minmax(pts_list)
@@ -55,4 +55,24 @@ class Solver:
 
         print(best_pts_list, best_pts_val)
         return best_pts_list # Should return a list of length num_robots with point arrays.
+    ########################################################################## 
+
+    ########################################################################## 
+    # Converts a chromosome into a list of lists containing each path.
+    def chrom_to_path(self, chrom, pts_start, num_paths):
+        paths = []
+
+        for x in range(num_paths):
+            if pts_start:
+                paths.append([pts_start[x]])
+            else:
+                paths.append([])
+
+        i = 0
+        for chrom_val in chrom:
+            if chrom_val < 0:
+                i += 1
+            else:
+                paths[i].append(chrom_val)
+        return paths
     ########################################################################## 

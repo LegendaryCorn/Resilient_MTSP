@@ -26,6 +26,9 @@ class Evaluator:
         temp_depot_list = self.depot_list.copy()
 
         for i in range(len(paths)):
+            
+            if(len(paths[i]) <= 1):
+                return float('inf')
 
             if(temp_depot_list[i]) == -1: # for the case where the depots haven't been initialized
                 temp_depot_list[i] = paths[i][0]
