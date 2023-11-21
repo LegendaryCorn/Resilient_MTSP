@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import sys
 import time
 import tsp_reader
-from solvers import solver
 import robot_manager
 
 ##########################################################################  

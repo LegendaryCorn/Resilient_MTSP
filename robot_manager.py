@@ -6,7 +6,7 @@
 ###########################
 
 import robot
-from solvers import solver
+from solvers import solver_tcxga
 import numpy as np
 
 class RobotMgr:
@@ -22,7 +22,7 @@ class RobotMgr:
         self.dist_mat = dist_mat # Matrix of distances, to be used by robots
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
-        self.solv_init = solver.Solver(dist_mat) # Initial solver
+        self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat) # Initial solver
 
     ##########################################################################  
     # Moves the robots
