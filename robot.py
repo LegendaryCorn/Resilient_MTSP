@@ -55,7 +55,6 @@ class Robot:
             if self.path_len == 0 and self.is_returning: # If it is finished
                 self.is_finished = True
                 print(str(self.id) + " finished")
-                self.mgr.active_robots.remove(self.id)
     
             elif self.path_len == 0: # If path has been completed:
                 # Report finished point
@@ -69,5 +68,7 @@ class Robot:
                 if len(self.path) == 0:
                     self.is_returning = True
                     self.path.append(self.depot)
+                    self.mgr.active_robots.remove(self.id)
+                    print(str(self.id) + " returning")
                 
                 self.path_len = self.mgr.dist_mat[self.from_point][self.path[0]]

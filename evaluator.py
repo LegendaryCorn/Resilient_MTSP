@@ -27,7 +27,7 @@ class Evaluator:
 
         for i in range(len(paths)):
             
-            if(len(paths[i]) <= 1):
+            if(len(paths[i]) < 1):
                 return float('inf')
 
             if(temp_depot_list[i]) == -1: # for the case where the depots haven't been initialized

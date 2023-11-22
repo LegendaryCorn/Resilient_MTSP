@@ -51,6 +51,7 @@ class RobotMgr:
         for active_robot_ind in self.active_robots:
             starting_pts.append(self.robots[active_robot_ind].path[0])
             act_robo.append(self.robots[active_robot_ind])
+
         paths = self.solv_init.solve(act_robo, self.to_visit, starting_pts)
 
         for i in range(len(self.active_robots)):

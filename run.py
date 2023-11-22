@@ -19,7 +19,7 @@ def main():
     # I will modify this when it is necessary. Right now, this code can be ignored.
     if(len(sys.argv) != 2):
         print("Invalid arguments. Please enter the appropriate config file.")
-        print("python.exe main.py config.txt")
+        print("python.exe run.py config.txt")
         return
 
     # In case there is something wrong with the config file
