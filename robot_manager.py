@@ -13,7 +13,7 @@ class RobotMgr:
     
     ##########################################################################  
     # Initializes the robot manager; the number of robots must be specified.
-    def __init__(self, num_robots, dist_mat):
+    def __init__(self, num_robots, dist_mat, config):
         self.robots = []
         self.active_robots = list(range(num_robots))
         for i in range(num_robots):
@@ -23,6 +23,7 @@ class RobotMgr:
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
         self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat) # Initial solver
+        self.config = config
 
     ##########################################################################  
     # Moves the robots
@@ -37,7 +38,7 @@ class RobotMgr:
         act_robo = []
         for active_robot_ind in self.active_robots:
             act_robo.append(self.robots[active_robot_ind])
-        paths = self.solv_init.solve(act_robo, self.to_visit, [])
+        paths = self.solv_init.solve(act_robo, self.to_visit, [], self.config)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].init_path(paths[i])
@@ -52,7 +53,7 @@ class RobotMgr:
             starting_pts.append(self.robots[active_robot_ind].path[0])
             act_robo.append(self.robots[active_robot_ind])
 
-        paths = self.solv_init.solve(act_robo, self.to_visit, starting_pts)
+        paths = self.solv_init.solve(act_robo, self.to_visit, starting_pts, self.config)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].modify_path(paths[i])

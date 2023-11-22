@@ -20,7 +20,7 @@ class Solver:
     # The base solver.
     # pts_visit is the points to be visited; this should contain all points for the initial run.
     # pts_start is the points to start at. This should be an empty array [] for the initial run.
-    def solve(self, robots, pts_visit, pts_start):
+    def solve(self, robots, pts_visit, pts_start, config):
 
         best_pts_list = []
         best_pts_val = -1

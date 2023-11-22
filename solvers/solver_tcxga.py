@@ -31,14 +31,10 @@ class Solver_TCXGA(solver.Solver):
     # The base solver.
     # pts_visit is the points to be visited; this should contain all points for the initial run.
     # pts_start is the points to start at. This should be an empty array [] for the initial run.
-    def solve(self, robots, pts_visit, pts_start):
+    def solve(self, robots, pts_visit, pts_start, config):
 
         # GA parameters (will need external values)
-        pop_size = 20
-        gen_count = 30
-        p_crossover = 0.7
-        p_mutation = 0.3
-        replacement_percent = 0.2
+        pop_size = config['POP_SIZE']
 
         # Sets up the evaluator
         lens = []
@@ -54,24 +50,46 @@ class Solver_TCXGA(solver.Solver):
         for pt_st in pts_start:
             pts.remove(pt_st)
 
-        # Sets up our population
-        pop = []
-        for p in range(pop_size):
-            ind = Individual_TCXGA(rand_chrom(pts, len(robots)))
-            ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, len(robots)))
-            print(ind.chrom)
-            print(chrom_to_path(ind.chrom, pts_start, len(robots)))
-            print(ind.fitness)
-            pop.append(ind)
-
-
-        # GA Run
-        for gen in range(gen_count):
-            1
+        pop = self.genetic_algo(pts, pts_start, eval, len(robots), config)
 
         # From our final population, find the best individual, and return it.
         return chrom_to_path(pop[0].chrom, pts_start, len(robots)) # Should return a list of length num_robots with point arrays.
     ########################################################################## 
+
+    ########################################################################## 
+    # Contains all of the genetic algorithm operations.
+    def genetic_algo(self, pts, pts_start, eval, num_robots, config):
+
+        # Config
+        pop_size = int(config['POP_SIZE'])
+        gen_count = int(config['NUM_GENS'])
+        p_crossover = config['CRS_PROB']
+        p_mutation = config['MUT_PROB']
+        replacement_percent = config['REP_PERC']
+
+
+        # Sets up our population
+        pop = []
+        for p in range(pop_size):
+            ind = Individual_TCXGA(rand_chrom(pts, num_robots))
+            ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, num_robots))
+            pop.append(ind)
+        pop = sort_pop(pop)
+
+        # Do the genetic algorithm
+        for gen in range(gen_count):
+            1
+
+            # Selection
+
+            # Crossover
+
+            # Mutation
+
+            # Replacement
+        
+        return pop
+    ##########################################################################  
 
 
 ########################################################################## 
