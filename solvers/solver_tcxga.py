@@ -45,15 +45,14 @@ class Solver_TCXGA(solver.Solver):
         eval = evaluator.Evaluator(lens, depots, self.dist_mat)
 
         # Specifies the points that need to be visited
-        pts = pts_visit.copy()
-        print(pts_start, pts)        
+        pts = pts_visit.copy()      
         for pt_st in pts_start:
             pts.remove(pt_st)
 
         pop = self.genetic_algo(pts, pts_start, eval, len(robots), config)
 
         # From our final population, find the best individual, and return it.
-        return chrom_to_path(pop[0].chrom, pts_start, len(robots)) # Should return a list of length num_robots with point arrays.
+        return chrom_to_path(pop[len(pop) - 1].chrom, pts_start, len(robots)) # Should return a list of length num_robots with point arrays.
     ########################################################################## 
 
     ########################################################################## 
@@ -78,22 +77,98 @@ class Solver_TCXGA(solver.Solver):
 
         # Do the genetic algorithm
         for gen in range(gen_count):
-            1
+            children = []
 
-            # Selection
-
+            # Selection 
+            # Assumes population is sorted worst to best!
+            for i in range(pop_size):
+                roulette = np.random.randint(0, pop_size * (pop_size + 1) / 2)
+                r = 0
+                for j in range(pop_size):
+                    if r >= roulette:
+                        break
+                    r += j + 2
+                ind = Individual_TCXGA(pop[j].chrom.copy())
+                print(ind.chrom, j)
+                children.append(ind)
+            print('---')
+            
             # Crossover
+            for i in range(int(pop_size / 2)):
+                ii = 2 * i
+                if(np.random.random() < p_crossover):
+                    new_chrom_1 = self.tcx_crossover(children[ii].chrom, children[ii + 1].chrom, num_robots)
+                    new_chrom_2 = self.tcx_crossover(children[ii + 1].chrom, children[ii].chrom, num_robots)
+                    children[ii].chrom = new_chrom_1
+                    children[ii + 1].chrom = new_chrom_2
+                print(children[ii].chrom)
+                print(children[ii + 1].chrom)
 
+            print('---')
+            
             # Mutation
-
+            for i in range(pop_size):
+                # First chromosome part mutation
+                if(np.random.random() < p_mutation):
+                    []
+                
+                # Second chromosome part mutation
+                if(np.random.random() < p_mutation):
+                    []
+            print('---')
+            
             # Replacement
+            #new_pop = []
+
+            #pop = new_pop
         
         return pop
     ##########################################################################  
 
+    ##########################################################################
+    # TCX crossover, contained in its own function because its really long.
+    def tcx_crossover(self, chrom_mom, chrom_dad, num_robots):
+        
+        sep = chrom_mom.index(-1)
+        new_dad = chrom_dad[0:sep].copy()
+        paths = chrom_to_path(chrom_mom, [], num_robots)
+        new_chrom = []
+        new_mom = []
+
+        for i in range(len(paths)):
+            num1 = np.random.randint(0, len(paths[i]))
+            num2 = np.random.randint(0, len(paths[i]))
+
+            if num1 > num2:
+                new_mom.append(paths[i][num2:num1+1].copy())
+            else:
+                new_mom.append(paths[i][num1:num2+1].copy())
+            
+            for gene in new_mom[i]:
+                new_dad.remove(gene)
+        
+        dad_points = np.sort(np.random.randint(0, len(new_dad), num_robots - 1))
+
+        x = 0
+        for j in range(len(new_dad)):
+            while x < num_robots - 1 and dad_points[x] <= j:
+                x += 1
+            new_mom[x].append(new_dad[j])
+
+        for a in range(len(new_mom)):
+            for b in range(len(new_mom[a])):
+                new_chrom.append(new_mom[a][b])
+        new_chrom.append(-1)
+        for a in range(len(new_mom)):
+            new_chrom.append(len(new_mom[a]))
+
+        return new_chrom
+    ##########################################################################
+
 
 ########################################################################## 
-# Sorts a population of individuals based on their fitness, from lowest to highest route length.
+# Sorts a population of individuals based on their fitness, from highest to lowest route length.
+# Highest to lowest route length will make rank roulette selection easier (weight = 1 + index)
 def sort_pop(pop):
     new_pop = []
     fit_arr = []
@@ -101,7 +176,7 @@ def sort_pop(pop):
     for ind in pop:
         fit_arr.append(ind.fitness)
 
-    inds = np.argsort(fit_arr)
+    inds = np.flip(np.argsort(fit_arr))
 
     for ind in inds:
         new_pop.append(pop[ind])
