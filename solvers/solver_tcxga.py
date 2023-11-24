@@ -63,7 +63,8 @@ class Solver_TCXGA(solver.Solver):
         pop_size = int(config['POP_SIZE'])
         gen_count = int(config['NUM_GENS'])
         p_crossover = config['CRS_PROB']
-        p_mutation = config['MUT_PROB']
+        p_mutation1 = config['MU1_PROB']
+        p_mutation2 = config['MU2_PROB']
         replacement_percent = config['REP_PERC']
 
 
@@ -108,13 +109,25 @@ class Solver_TCXGA(solver.Solver):
             
             # Mutation
             for i in range(pop_size):
+
+                sep = children[i].chrom.index(-1)
+
                 # First chromosome part mutation
-                if(np.random.random() < p_mutation):
-                    []
+                if(np.random.random() < p_mutation1):
+                    swap = np.random.randint(0, sep, 2)
+                    temp0 = children[i].chrom[swap[0]]
+                    temp1 = children[i].chrom[swap[1]]
+                    children[i].chrom[swap[0]] = temp1
+                    children[i].chrom[swap[1]] = temp0
                 
                 # Second chromosome part mutation
-                if(np.random.random() < p_mutation):
-                    []
+                if(np.random.random() < p_mutation2):
+                    swap = np.random.randint(0, num_robots, 2)
+                    temp0 = children[i].chrom[sep + 1 + swap[0]]
+                    temp1 = children[i].chrom[sep + 1 + swap[1]]
+                    children[i].chrom[sep + 1 + swap[0]] = temp1
+                    children[i].chrom[sep + 1 + swap[1]] = temp0
+                print(children[i].chrom)
             print('---')
             
             # Replacement

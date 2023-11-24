@@ -15,5 +15,6 @@ SHD_PROB - The probability of a shutdown occurring at any given timestep.
 POP_SIZE - Population size of the genetic algorithm.
 NUM_GENS - Number of generations for the genetic algorithm.
 CRS_PROB - Crossover probability for the genetic algorithm.
-MUT_PROB - Mutation probability for the genetic algorithm.
+MU1_PROB - Probability of mutation for the first part of the chromosome.
+MU1_PROB - Probability of mutation for the second part of the chromosome.
 REP_PERC - The number of population members to replace at each generation.
