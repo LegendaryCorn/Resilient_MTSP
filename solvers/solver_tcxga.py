@@ -90,9 +90,7 @@ class Solver_TCXGA(solver.Solver):
                         break
                     r += j + 2
                 ind = Individual_TCXGA(pop[j].chrom.copy())
-                print(ind.chrom, j)
                 children.append(ind)
-            print('---')
             
             # Crossover
             for i in range(int(pop_size / 2)):
@@ -102,10 +100,6 @@ class Solver_TCXGA(solver.Solver):
                     new_chrom_2 = self.tcx_crossover(children[ii + 1].chrom, children[ii].chrom, num_robots)
                     children[ii].chrom = new_chrom_1
                     children[ii + 1].chrom = new_chrom_2
-                print(children[ii].chrom)
-                print(children[ii + 1].chrom)
-
-            print('---')
             
             # Mutation
             for i in range(pop_size):
@@ -127,14 +121,21 @@ class Solver_TCXGA(solver.Solver):
                     temp1 = children[i].chrom[sep + 1 + swap[1]]
                     children[i].chrom[sep + 1 + swap[0]] = temp1
                     children[i].chrom[sep + 1 + swap[1]] = temp0
-                print(children[i].chrom)
-            print('---')
             
             # Replacement
-            #new_pop = []
+            for child in children:
+                child.fitness = eval.eval_minmax(chrom_to_path(child.chrom, pts_start, num_robots))
+            children = sort_pop(children)
+            num_to_replace = int(pop_size * replacement_percent)
+            best_worst = []
+            for i in range(num_to_replace):
+                best_worst.append(pop[i])
+                best_worst.append(children[pop_size - 1 - i]) # Best performer is last!
+            best_worst = sort_pop(best_worst)
+            for i in range(num_to_replace):
+                pop[i] = best_worst[2 * num_to_replace - 1 - i]
+            pop = sort_pop(pop)
 
-            #pop = new_pop
-        
         return pop
     ##########################################################################  
 
