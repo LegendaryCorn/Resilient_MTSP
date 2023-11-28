@@ -8,7 +8,7 @@ from solvers import solver
 import evaluator
 import numpy as np
 
-class Individual_TCXGA:
+class Individual_psTCXGA:
 
     ########################################################################## 
     # Initializes the individual. Needs work.
@@ -19,7 +19,7 @@ class Individual_TCXGA:
         # going to use the path length as the fitness. Fitness should be minimized.
     ########################################################################## 
 
-class Solver_TCXGA(solver.Solver):
+class Solver_psTCXGA(solver.Solver):
 
     ########################################################################## 
     # Initializes a solver; distance matrix included.
@@ -34,7 +34,7 @@ class Solver_TCXGA(solver.Solver):
     def solve(self, robots, pts_visit, pts_start, config):
 
         # GA parameters (will need external values)
-        pop_size = config['TG_POP_SIZE']
+        pop_size = config['PS_POP_SIZE']
 
         # Sets up the evaluator
         lens = []
@@ -60,18 +60,18 @@ class Solver_TCXGA(solver.Solver):
     def genetic_algo(self, pts, pts_start, eval, num_robots, config):
 
         # Config
-        pop_size = int(config['TG_POP_SIZE'])
-        gen_count = int(config['TG_NUM_GENS'])
-        p_crossover = config['TG_CRS_PROB']
-        p_mutation1 = config['TG_MU1_PROB']
-        p_mutation2 = config['TG_MU2_PROB']
-        replacement_percent = config['TG_REP_PERC']
+        pop_size = int(config['PS_POP_SIZE'])
+        gen_count = int(config['PS_NUM_GENS'])
+        p_crossover = config['PS_CRS_PROB']
+        p_mutation1 = config['PS_MU1_PROB']
+        p_mutation2 = config['PS_MU2_PROB']
+        replacement_percent = config['PS_REP_PERC']
 
 
         # Sets up our population
         pop = []
         for p in range(pop_size):
-            ind = Individual_TCXGA(rand_chrom(pts, num_robots))
+            ind = Individual_psTCXGA(rand_chrom(pts, num_robots))
             ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, num_robots))
             pop.append(ind)
         pop = sort_pop(pop)
@@ -89,7 +89,7 @@ class Solver_TCXGA(solver.Solver):
                     if r >= roulette:
                         break
                     r += j + 2
-                ind = Individual_TCXGA(pop[j].chrom.copy())
+                ind = Individual_psTCXGA(pop[j].chrom.copy())
                 children.append(ind)
             
             # Crossover

@@ -7,6 +7,7 @@
 
 import robot
 from solvers import solver_tcxga
+from solvers import solver_pstcxga
 import numpy as np
 
 class RobotMgr:
@@ -23,6 +24,7 @@ class RobotMgr:
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
         self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat) # Initial solver
+        self.solv_err = solver_pstcxga.Solver_psTCXGA(dist_mat) # Error solver
         self.config = config
 
     ##########################################################################  
@@ -39,6 +41,7 @@ class RobotMgr:
         for active_robot_ind in self.active_robots:
             act_robo.append(self.robots[active_robot_ind])
         paths = self.solv_init.solve(act_robo, self.to_visit, [], self.config)
+        print(paths)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].init_path(paths[i])
@@ -53,7 +56,8 @@ class RobotMgr:
             starting_pts.append(self.robots[active_robot_ind].path[0])
             act_robo.append(self.robots[active_robot_ind])
 
-        paths = self.solv_init.solve(act_robo, self.to_visit, starting_pts, self.config)
+        paths = self.solv_err.solve(act_robo, self.to_visit, starting_pts, self.config)
+        print(paths)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].modify_path(paths[i])

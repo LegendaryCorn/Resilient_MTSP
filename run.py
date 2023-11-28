@@ -29,18 +29,18 @@ def main():
         return   
 
     # Random seed   
-    np.random.seed(int(config['RND_SEED']))
+    np.random.seed(int(config['EN_RND_SEED']))
 
     # tsp_name is just the file name
     # tsp_c_type is the coordinate system used
     # tsp_points are the points
     # tsp_dist_mat are the integer distances (.tsp uses integer distances)
-    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file(config['TSP_FILE'])
+    tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file(config['EN_TSP_FILE'])
     tsp_dist_mat = tsp_reader.get_distances(tsp_points, tsp_c_type)
 
-    robo_mgr = robot_manager.RobotMgr(int(config['NUM_ROBS']), tsp_dist_mat, config)
-    num_fails = int(config['NUM_SHDS'])
-    fail_prob = config['SHD_PROB']
+    robo_mgr = robot_manager.RobotMgr(int(config['EN_NUM_ROBS']), tsp_dist_mat, config)
+    num_fails = int(config['EN_NUM_SHDS'])
+    fail_prob = config['EN_SHD_PROB']
     robo_mgr.calc_robotpath_init() # Calculate initial paths
 
     path_steps = 0 # Used to measure the time_steps
