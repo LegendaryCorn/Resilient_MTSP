@@ -28,7 +28,7 @@ class Solver_psTCXGA(solver.Solver):
     ########################################################################## 
 
     ##########################################################################  
-    # The base solver.
+    # The new solver.
     # pts_visit is the points to be visited; this should contain all points for the initial run.
     # pts_start is the points to start at. This should be an empty array [] for the initial run.
     def solve(self, robots, pts_visit, pts_start, config):
@@ -49,7 +49,7 @@ class Solver_psTCXGA(solver.Solver):
         for pt_st in pts_start:
             pts.remove(pt_st)
 
-        pop = self.genetic_algo(pts, pts_start, eval, len(robots), config)
+        pop = self.genetic_algo(pts, pts_start, eval, robots, config)
 
         # From our final population, find the best individual, and return it.
         return chrom_to_path(pop[len(pop) - 1].chrom, pts_start, len(robots)) # Should return a list of length num_robots with point arrays.
@@ -57,7 +57,7 @@ class Solver_psTCXGA(solver.Solver):
 
     ########################################################################## 
     # Contains all of the genetic algorithm operations.
-    def genetic_algo(self, pts, pts_start, eval, num_robots, config):
+    def genetic_algo(self, pts, pts_start, eval, robots, config):
 
         # Config
         pop_size = int(config['PS_POP_SIZE'])
@@ -66,13 +66,32 @@ class Solver_psTCXGA(solver.Solver):
         p_mutation1 = config['PS_MU1_PROB']
         p_mutation2 = config['PS_MU2_PROB']
         replacement_percent = config['PS_REP_PERC']
+        rand_prop = config['PS_RND_PROP']
 
+
+        # Sets up our new points
+        lost_pts = pts.copy()
+        paths = []
+        for r in range(len(robots)):
+            r_path = robots[r].path.copy()
+            if len(pts_start) > 0:
+                r_path.remove(pts_start[r])
+            paths.append(r_path)
+            for p in r_path:
+                lost_pts.remove(p)
 
         # Sets up our population
         pop = []
-        for p in range(pop_size):
-            ind = Individual_psTCXGA(rand_chrom(pts, num_robots))
-            ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, num_robots))
+
+        prop = int(pop_size * rand_prop)
+
+        for p in range(pop_size - prop):
+            ind = Individual_psTCXGA(path_to_chrom(rand_path_insert(lost_pts, paths)))
+            ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, len(robots)))
+            pop.append(ind)
+        for p in range(prop):
+            ind = Individual_psTCXGA(rand_chrom(pts, len(robots)))
+            ind.fitness = eval.eval_minmax(chrom_to_path(ind.chrom, pts_start, len(robots)))
             pop.append(ind)
         pop = sort_pop(pop)
 
@@ -96,8 +115,8 @@ class Solver_psTCXGA(solver.Solver):
             for i in range(int(pop_size / 2)):
                 ii = 2 * i
                 if(np.random.random() < p_crossover):
-                    new_chrom_1 = self.tcx_crossover(children[ii].chrom, children[ii + 1].chrom, num_robots)
-                    new_chrom_2 = self.tcx_crossover(children[ii + 1].chrom, children[ii].chrom, num_robots)
+                    new_chrom_1 = self.tcx_crossover(children[ii].chrom, children[ii + 1].chrom, len(robots))
+                    new_chrom_2 = self.tcx_crossover(children[ii + 1].chrom, children[ii].chrom, len(robots))
                     children[ii].chrom = new_chrom_1
                     children[ii + 1].chrom = new_chrom_2
             
@@ -116,7 +135,7 @@ class Solver_psTCXGA(solver.Solver):
                 
                 # Second chromosome part mutation
                 if(np.random.random() < p_mutation2):
-                    swap = np.random.randint(0, num_robots, 2)
+                    swap = np.random.randint(0, len(robots), 2)
                     temp0 = children[i].chrom[sep + 1 + swap[0]]
                     temp1 = children[i].chrom[sep + 1 + swap[1]]
                     children[i].chrom[sep + 1 + swap[0]] = temp1
@@ -124,7 +143,7 @@ class Solver_psTCXGA(solver.Solver):
             
             # Replacement
             for child in children:
-                child.fitness = eval.eval_minmax(chrom_to_path(child.chrom, pts_start, num_robots))
+                child.fitness = eval.eval_minmax(chrom_to_path(child.chrom, pts_start, len(robots)))
             children = sort_pop(children)
             num_to_replace = int(pop_size * replacement_percent)
             best_worst = []
@@ -169,12 +188,7 @@ class Solver_psTCXGA(solver.Solver):
                 x += 1
             new_mom[x].append(new_dad[j])
 
-        for a in range(len(new_mom)):
-            for b in range(len(new_mom[a])):
-                new_chrom.append(new_mom[a][b])
-        new_chrom.append(-1)
-        for a in range(len(new_mom)):
-            new_chrom.append(len(new_mom[a]))
+        new_chrom = path_to_chrom(new_mom)
 
         return new_chrom
     ##########################################################################
@@ -224,6 +238,22 @@ def chrom_to_path(chrom, pts_start, num_paths):
     return paths
 ########################################################################## 
 
+########################################################################## 
+# Converts a path into a chromosome.
+def path_to_chrom(paths):
+
+    chrom = []
+    for path in paths:
+        for i in path:
+            chrom.append(i)
+    
+    chrom.append(-1)
+    for path in paths:
+        chrom.append(len(path))
+
+    return chrom
+########################################################################## 
+
 ##########################################################################
 # Generates a random two-part chromosome
 def rand_chrom(pts_list, n):
@@ -238,6 +268,23 @@ def rand_chrom(pts_list, n):
         chrom.append(r_length)
 
     return chrom
+##########################################################################
+
+##########################################################################
+# Inserts several points randomly into a list of paths.
+def rand_path_insert(pts_to_add, paths):
+    
+    new_paths = []
+    for path in paths:
+        new_paths.append(path.copy())
+
+    for pt in pts_to_add:
+        i = np.random.randint(0, len(new_paths))
+        j = np.random.randint(0, len(new_paths[i]) + 1)
+
+        new_paths[i].insert(j, pt)
+
+    return new_paths
 ##########################################################################
 
 ##########################################################################

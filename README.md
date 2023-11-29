@@ -18,6 +18,7 @@ XX_CRS_PROB - Crossover probability for the genetic algorithm.
 XX_MU1_PROB - Probability of mutation for the first part of the chromosome.
 XX_MU1_PROB - Probability of mutation for the second part of the chromosome.
 XX_REP_PERC - The number of population members to replace at each generation.
+PS_RND_PROP - Number of psTCXGA population members that are completely random.
 
 XX = TG - TCXGA
 XX = PS - psTCXGA
