@@ -38,7 +38,7 @@ def main():
     tsp_name, tsp_c_type, tsp_points = tsp_reader.read_tsp_file(config['EN_TSP_FILE'])
     tsp_dist_mat = tsp_reader.get_distances(tsp_points, tsp_c_type)
 
-    robo_mgr = robot_manager.RobotMgr(int(config['EN_NUM_ROBS']), tsp_dist_mat, config)
+    robo_mgr = robot_manager.RobotMgr(int(config['EN_NUM_ROBS']), tsp_dist_mat, tsp_points, config)
     num_fails = int(config['EN_NUM_SHDS'])
     fail_prob = config['EN_SHD_PROB']
     robo_mgr.calc_robotpath_init() # Calculate initial paths

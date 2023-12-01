@@ -8,23 +8,25 @@
 import robot
 from solvers import solver_tcxga
 from solvers import solver_pstcxga
+from solvers import solver_cmmtsp
 import numpy as np
 
 class RobotMgr:
     
     ##########################################################################  
     # Initializes the robot manager; the number of robots must be specified.
-    def __init__(self, num_robots, dist_mat, config):
+    def __init__(self, num_robots, dist_mat, pts_pos, config):
         self.robots = []
         self.active_robots = list(range(num_robots))
         for i in range(num_robots):
             self.robots.append(robot.Robot(self, i))
         
         self.dist_mat = dist_mat # Matrix of distances, to be used by robots
+        self.pts_pos = pts_pos # Location of all points
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
-        self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat) # Initial solver
-        self.solv_err = solver_pstcxga.Solver_psTCXGA(dist_mat) # Error solver
+        self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat, pts_pos) # Initial solver
+        self.solv_err = solver_pstcxga.Solver_psTCXGA(dist_mat, pts_pos) # Error solver
         self.config = config
 
     ##########################################################################  

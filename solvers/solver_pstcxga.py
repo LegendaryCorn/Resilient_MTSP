@@ -22,10 +22,11 @@ class Individual_psTCXGA:
 class Solver_psTCXGA(solver.Solver):
 
     ########################################################################## 
-    # Initializes a solver; distance matrix included.
-    def __init__(self, dist_mat):
+    # Initializes a solver; distance matrix and point positions included.
+    def __init__(self, dist_mat, pts_pos):
         self.dist_mat = dist_mat
-    ########################################################################## 
+        self.pts_pos = pts_pos
+    ##########################################################################
 
     ##########################################################################  
     # The new solver.
