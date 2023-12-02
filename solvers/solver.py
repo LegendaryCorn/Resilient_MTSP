@@ -32,7 +32,7 @@ class Solver:
         for robot in robots:
             lens.append(max(robot.path_len, 0)) # path_len is -1 if there's no path
             depots.append(robot.depot)
-        eval = evaluator.Evaluator(lens, depots, self.dist_mat)
+        eval = evaluator.Evaluator(lens, depots, self.dist_mat, self.pts_pos)
 
         for x in range(10):
 

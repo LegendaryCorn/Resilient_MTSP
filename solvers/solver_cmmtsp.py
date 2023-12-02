@@ -28,7 +28,7 @@ class Solver_CMMTSP(solver.Solver):
         for robot in robots:
             lens.append(max(robot.path_len, 0)) # path_len is -1 if there's no path
             depots.append(robot.depot)
-        eval = evaluator.Evaluator(lens, depots, self.dist_mat)
+        eval = evaluator.Evaluator(lens, depots, self.dist_mat, self.pts_pos)
 
         # Specifies the points that need to be visited
         pts = pts_visit.copy()      
@@ -36,6 +36,9 @@ class Solver_CMMTSP(solver.Solver):
             pts.remove(pt_st)
 
         clustered_pts = self.k_means(pts, len(robots))
+
+        pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0])
+        print(pts_list, pts_dist)
 
         # From our final population, find the best individual, and return it.
         return []

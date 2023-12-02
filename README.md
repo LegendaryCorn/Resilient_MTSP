@@ -1,6 +1,9 @@
 # Resilient_MTSP
  MTSP solver that is supposed to withstand system failures.
 
+pip install lkh
+
+The LKH package must be installed for this code to run.
 
 Command to run the code (you need to be in the Resilient_MTSP folder)
 python.exe run.py config.txt
@@ -22,3 +25,5 @@ PS_RND_PROP - Number of psTCXGA population members that are completely random.
 
 XX = TG - TCXGA
 XX = PS - psTCXGA
+
+http://akira.ruc.dk/~keld/research/LKH-3/
