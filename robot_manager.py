@@ -26,7 +26,7 @@ class RobotMgr:
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
         self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat, pts_pos) # Initial solver
-        self.solv_err = solver_pstcxga.Solver_psTCXGA(dist_mat, pts_pos) # Error solver
+        self.solv_err = solver_cmmtsp.Solver_CMMTSP(dist_mat, pts_pos) # Error solver
         self.config = config
 
     ##########################################################################  

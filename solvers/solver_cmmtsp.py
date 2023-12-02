@@ -37,7 +37,7 @@ class Solver_CMMTSP(solver.Solver):
 
         clustered_pts = self.k_means(pts, len(robots))
 
-        pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0])
+        pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0], robots[0].path_len)
         print(pts_list, pts_dist)
 
         # From our final population, find the best individual, and return it.
