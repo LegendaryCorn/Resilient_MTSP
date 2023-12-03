@@ -35,17 +35,15 @@ class Solver_CMMTSP(solver.Solver):
         for pt_st in pts_start:
             pts.remove(pt_st)
 
-        clustered_pts = self.k_means(pts, len(robots))
+        # 3 Steps
 
-        #pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0], robots[0].path_len)
+        clustered_pts = self.k_means(pts, len(robots)) # Clustering
 
-        paths, paths_len = self.auction(clustered_pts, robots, pts_start, eval)
+        paths, paths_len = self.auction(clustered_pts, robots, pts_start, eval) # Auctioning
 
-        improved_paths = self.path_improve(paths, robots, eval)
+        improved_paths, improved_paths_len = self.path_improve(paths, paths_len, robots, pts_start, eval) # Improving
 
-        print(paths, improved_paths)
-
-        # From our final population, find the best individual, and return it.
+        # Return the paths
         return improved_paths
     ########################################################################## 
 
@@ -143,6 +141,33 @@ class Solver_CMMTSP(solver.Solver):
 
     ########################################################################## 
     # Improvement function; only does MinMax improvement (we don't have variable speed)
-    def path_improve(self, paths, robots, eval):
-        return paths
+    def path_improve(self, paths, paths_len, robots, pts_start, eval):
+
+        new_paths = paths.copy()
+        new_paths_len = paths_len.copy()
+
+        cont = True
+        while cont:
+            
+            cont = False
+            max_len = np.max(new_paths_len)
+            max_r = np.argmax(new_paths_len)
+
+            for r in range(len(robots)):
+                
+                if r == max_r:
+                    continue
+
+                swap1, swap1_len = eval.eval_lkh(pts_start[r], robots[r].depot, new_paths[max_r], robots[r].path_len)
+                swap2, swap2_len = eval.eval_lkh(pts_start[max_r], robots[max_r].depot, new_paths[r], robots[max_r].path_len)
+
+                if swap1_len < max_len and swap2_len < max_len:
+                    new_paths[r] = swap1
+                    new_paths_len[r] = swap1_len
+                    new_paths[max_r] = swap2
+                    new_paths_len[max_r] = swap2_len
+                    cont = True
+                    break
+
+        return paths, paths_len
     ########################################################################## 
