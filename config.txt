@@ -1,4 +1,4 @@
-EN_RND_SEED | 5
+EN_RND_SEED | 2
 EN_TSP_FILE | tsp/lin105.tsp
 EN_NUM_ROBS | 5
 EN_NUM_SHDS | 1
