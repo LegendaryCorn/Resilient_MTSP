@@ -86,7 +86,10 @@ class Solver_CMMTSP(solver.Solver):
             
             old_means = new_means.copy()
             for i in range(n):
-                new_means[i] = cluster_means[i] / len(clusters[i])
+                if len(clusters[i]) == 0:
+                    new_means[i] = old_means[i]
+                else:
+                    new_means[i] = cluster_means[i] / len(clusters[i])
 
         return clusters
     ########################################################################## 
