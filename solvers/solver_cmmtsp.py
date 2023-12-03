@@ -37,11 +37,16 @@ class Solver_CMMTSP(solver.Solver):
 
         clustered_pts = self.k_means(pts, len(robots))
 
-        pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0], robots[0].path_len)
-        print(pts_list, pts_dist)
+        #pts_list, pts_dist = eval.eval_lkh(pts_start[0], robots[0].depot, clustered_pts[0], robots[0].path_len)
+
+        paths, paths_len = self.auction(clustered_pts, robots, pts_start, eval)
+
+        improved_paths = self.path_improve(paths, robots, eval)
+
+        print(paths, improved_paths)
 
         # From our final population, find the best individual, and return it.
-        return []
+        return improved_paths
     ########################################################################## 
 
     ########################################################################## 
@@ -85,7 +90,59 @@ class Solver_CMMTSP(solver.Solver):
             for i in range(n):
                 new_means[i] = cluster_means[i] / len(clusters[i])
 
-        print(clusters, new_means)
-
         return clusters
+    ########################################################################## 
+    
+    ########################################################################## 
+    # The auction function
+    def auction(self, clusters, robots, pts_start, eval):
+
+        auctioned_paths = []
+        auctioned_path_lens = []
+        auctioned_clusters = []
+        unassigned_clusters = list(range(len(clusters)))
+        for robot in robots:
+            auctioned_paths.append([])
+            auctioned_path_lens.append(-1)
+            auctioned_clusters.append(-1)
+
+        for c in unassigned_clusters:
+            cluster = clusters[c]
+            bids = []
+            for i in range(len(robots)):
+                p, p_len = eval.eval_lkh(pts_start[i], robots[i].depot, cluster, robots[i].path_len)
+
+                if(auctioned_clusters[i] == -1):
+                    bids.append([p, p_len])
+                else:
+                    if p_len < auctioned_path_lens[i]:
+                        bids.append([p, p_len])
+                    else:
+                        bids.append([[], -1]) # No bid
+
+            # Give to lowest bidder
+            min_cost = np.inf
+            min_ind = -1
+            for b in range(len(bids)):
+                if(bids[b][1] < min_cost and bids[b][1] != -1):
+                    min_cost = bids[b][1]
+                    min_ind = b
+
+            if(auctioned_clusters[min_ind] == -1): # If the robot isn't exchanging
+                auctioned_paths[min_ind] = bids[min_ind][0]
+                auctioned_path_lens[min_ind] = bids[min_ind][1]
+                auctioned_clusters[min_ind] = c
+            else:
+                unassigned_clusters.append(auctioned_clusters[min_ind])
+                auctioned_paths[min_ind] = bids[min_ind][0]
+                auctioned_path_lens[min_ind] = bids[min_ind][1]
+                auctioned_clusters[min_ind] = c
+
+        return auctioned_paths, auctioned_path_lens
+    ########################################################################## 
+
+    ########################################################################## 
+    # Improvement function; only does MinMax improvement (we don't have variable speed)
+    def path_improve(self, paths, robots, eval):
+        return paths
     ########################################################################## 

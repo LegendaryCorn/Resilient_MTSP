@@ -56,7 +56,6 @@ class Evaluator:
         node_list = nodes.copy()
         node_list.insert(0,depot)
         node_list.insert(1,start)
-        print(node_list)
 
         # Create a fake .tsp file
         problem_tsp  = "NAME: problem\n"
@@ -83,7 +82,6 @@ class Evaluator:
         for i in range(num_nodes - 1):
             i0 = (i + ind) % num_nodes
             i1 = (i + ind + 1) % num_nodes
-            print(sol[0][i0], sol[0][i1])
             total_len += self.dist_mat[node_list[sol[0][i0] - 1]][node_list[sol[0][i1] - 1]]
             
             if i != 0:
