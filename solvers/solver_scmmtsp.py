@@ -2,7 +2,8 @@
 # solver_scmmtsp.py
 #
 # Solver that uses a seeded clustering based market approach.
-# The initial means are based on the means of the robots' paths.
+# The initial means are based on the depots.
+# This doesn't really work but is here for testing purposes.
 ###########################
 
 from solvers import solver

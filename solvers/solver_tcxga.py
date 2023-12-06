@@ -162,7 +162,8 @@ class Solver_TCXGA(solver.Solver):
             for gene in new_mom[i]:
                 new_dad.remove(gene)
         
-        dad_points = np.sort(np.random.randint(0, len(new_dad), num_robots - 1))
+        if(len(new_dad) != 0):
+            dad_points = np.sort(np.random.randint(0, len(new_dad), num_robots - 1))
 
         x = 0
         for j in range(len(new_dad)):

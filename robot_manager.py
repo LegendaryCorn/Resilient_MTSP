@@ -10,6 +10,7 @@ from solvers import solver_tcxga
 from solvers import solver_pstcxga
 from solvers import solver_cmmtsp
 from solvers import solver_scmmtsp
+from solvers import solver_cmga
 import numpy as np
 
 class RobotMgr:
@@ -27,7 +28,7 @@ class RobotMgr:
         self.to_visit = list(range(len(dist_mat))) # Points which haven't been visited
 
         self.solv_init = solver_tcxga.Solver_TCXGA(dist_mat, pts_pos) # Initial solver
-        self.solv_err = solver_scmmtsp.Solver_sCMMTSP(dist_mat, pts_pos) # Error solver
+        self.solv_err = solver_cmga.Solver_CMGA(dist_mat, pts_pos) # Error solver
         self.config = config
 
     ##########################################################################  
