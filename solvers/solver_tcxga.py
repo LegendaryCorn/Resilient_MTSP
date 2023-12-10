@@ -53,7 +53,7 @@ class Solver_TCXGA(solver.Solver):
         pop = self.genetic_algo(pts, pts_start, eval, len(robots), config)
 
         # From our final population, find the best individual, and return it.
-        return chrom_to_path(pop[len(pop) - 1].chrom, pts_start, len(robots)) # Should return a list of length num_robots with point arrays.
+        return chrom_to_path(pop[len(pop) - 1].chrom, pts_start, len(robots)), pop[len(pop) - 1].fitness # Should return a list of length num_robots with point arrays.
     ########################################################################## 
 
     ########################################################################## 

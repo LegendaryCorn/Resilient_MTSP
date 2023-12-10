@@ -44,8 +44,8 @@ class RobotMgr:
         act_robo = []
         for active_robot_ind in self.active_robots:
             act_robo.append(self.robots[active_robot_ind])
-        paths = self.solv_init.solve(act_robo, self.to_visit, [], self.config)
-        print(paths)
+        paths, metric = self.solv_init.solve(act_robo, self.to_visit, [], self.config)
+        print(paths, metric)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].init_path(paths[i])
@@ -60,8 +60,8 @@ class RobotMgr:
             starting_pts.append(self.robots[active_robot_ind].path[0])
             act_robo.append(self.robots[active_robot_ind])
 
-        paths = self.solv_err.solve(act_robo, self.to_visit, starting_pts, self.config)
-        print(paths)
+        paths, metric = self.solv_err.solve(act_robo, self.to_visit, starting_pts, self.config)
+        print(paths, metric)
 
         for i in range(len(self.active_robots)):
             self.robots[self.active_robots[i]].modify_path(paths[i])

@@ -44,7 +44,7 @@ class Solver_CMMTSP(solver.Solver):
         improved_paths, improved_paths_len = self.path_improve(paths, paths_len, robots, pts_start, eval) # Improving
 
         # Return the paths
-        return improved_paths
+        return improved_paths, np.max(improved_paths_len)
     ########################################################################## 
 
     ########################################################################## 

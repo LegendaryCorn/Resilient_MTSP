@@ -40,7 +40,7 @@ class Solver_CMGA(solver.Solver):
 
         # CMM
         solv_cmm = solver_cmmtsp.Solver_CMMTSP(self.dist_mat, self.pts_pos)
-        cmm_best = solv_cmm.solve(robots, pts_visit, pts_start, config)
+        cmm_best, cmm_len = solv_cmm.solve(robots, pts_visit, pts_start, config)
 
         # Fake set of robots for the SGA
         i = 0
@@ -58,8 +58,8 @@ class Solver_CMGA(solver.Solver):
 
         # Seeded Genetic Algorithm
         solv_sga = solver_pstcxga.Solver_psTCXGA(self.dist_mat, self.pts_pos)
-        sga_best = solv_sga.solve(fake_robots, pts_visit, pts_start, config)
+        sga_best, sga_len = solv_sga.solve(fake_robots, pts_visit, pts_start, config)
 
         # Return the best path
-        return sga_best
+        return sga_best, sga_len
     ########################################################################## 

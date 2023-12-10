@@ -55,7 +55,7 @@ class Solver:
                 best_pts_list = pts_list
 
         print(best_pts_list, best_pts_val)
-        return best_pts_list # Should return a list of length num_robots with point arrays.
+        return best_pts_list, best_pts_val # Should return a list of length num_robots with point arrays.
     ########################################################################## 
 
     ########################################################################## 
